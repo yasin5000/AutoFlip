@@ -82,20 +82,31 @@ class MainActivity : Activity() {
         root.addView(yLabel)
         root.addView(seek(p.yPct) { p.yPct = it })
 
+        root.addView(label("Koto second por flip hobe? (jemon 0.5 ba 1 ba 2)"))
+        val delayBox = EditText(this).apply {
+            setText((p.delayMs / 1000.0).toString())
+            inputType = android.text.InputType.TYPE_CLASS_NUMBER or
+                android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+            setSingleLine()
+        }
+        root.addView(delayBox)
+
         root.addView(Button(this).apply {
             text = "Save"
             setOnClickListener {
                 p.targetPackage = pkg.text.toString()
                 p.markers = markers.text.toString()
-                Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show()
+                val sec = delayBox.text.toString().toDoubleOrNull() ?: 0.7
+                p.delayMs = (sec * 1000).toLong().coerceIn(0L, 10000L)
+                Toast.makeText(context, "Saved: ${p.delayMs / 1000.0} sec por flip hobe", Toast.LENGTH_SHORT).show()
             }
         })
 
         root.addView(Button(this).apply {
-            text = "Test: ekhon flip tap koro (5 sec por)"
+            text = "Test: ekhon flip tap koro (1 sec por)"
             setOnClickListener {
-                Toast.makeText(context, "Tigo call screen e jan, 5 sec por tap hobe", Toast.LENGTH_LONG).show()
-                window.decorView.postDelayed({ FlipService.instance?.flipNow() }, 5000)
+                Toast.makeText(context, "Tigo call screen e jan, 1 sec por tap hobe", Toast.LENGTH_LONG).show()
+                window.decorView.postDelayed({ FlipService.instance?.flipNow() }, 1000)
             }
         })
     }
